@@ -1,0 +1,45 @@
+[
+    {
+        "Busqueda":"Hola mundo",
+        "Respuesta":[
+            {"texto1":"cant1"},
+            {"texto2":"cant2"},
+            {"texto3":"cant3"},
+            {"texto4":"cant4"},
+            {"texto5":"cant5"}
+        ]
+    },
+    {
+        "Busqueda":"Miraflore",
+        "Respuesta":[
+            {"texto1":"cant1"},
+            {"texto2":"cant2"},
+            {"texto3":"cant3"},
+            {"texto4":"cant4"},
+            {"texto5":"cant5"}
+        ]
+    },
+    {
+        "Busqueda":"Miraflore",
+        "Respuesta":[
+            {"texto1":"cant1"},
+            {"texto2":"cant2"},
+            {"texto3":"cant3"},
+            {"texto4":"cant4"},
+            {"texto5":"cant5"}
+        ]
+    },
+    {
+        "Busqueda":"Miraflore",
+        "Respuesta":[
+            {"texto1":"cant1"},
+            {"texto2":"cant2"},
+            {"texto3":"cant3"},
+            {"texto4":"cant4"},
+            {"texto5":"cant5"}
+        ]
+    }
+]
+
+
+
