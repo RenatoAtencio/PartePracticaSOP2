@@ -47,7 +47,7 @@ void receiveAndDisplayMessage(int clientSocket) {
     }
     else if (bytesRead > 0) {
         buffer[bytesRead] = '\0';
-        cout << "Respuesta del servidor:\n" << buffer << endl;
+        cout << "Respuesta del servidor: " << buffer << endl;
     }
 }
 
@@ -56,14 +56,18 @@ int main() {
     int serverPort = 12345;       // Puerto del servidor
     int clientSocket = connectToServer(serverIP, serverPort); //Conectar al servidor, si no se pudo se termina la ejecucion
 
-
     string msg;
     bool again = true;
     while (again) {
         cout << "ingrese su busqueda: ";
-        getline(cin,msg);
+        getline(cin, msg);
         sendMessage(clientSocket, msg);
         receiveAndDisplayMessage(clientSocket);
+        if (msg == "Salir") {
+            cout << "Se ha desconectado" << endl;
+            close(clientSocket);
+            exit(EXIT_FAILURE);
+        }
     }
 
     //close(clientSocket);

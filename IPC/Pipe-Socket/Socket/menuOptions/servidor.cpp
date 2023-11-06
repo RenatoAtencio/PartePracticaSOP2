@@ -141,13 +141,9 @@ int main() {
                         cout << "Cliente desconectado" << endl;
                         success = false;
                     }else{
-                        
                         operacion(option,clientSocket);
                     }
-                
                 }
-                
-
             } else {
                 cout << "Inicio de sesion incorrecto" << endl;
                 cout << "Cliente desconectado" << endl;

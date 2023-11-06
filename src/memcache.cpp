@@ -54,7 +54,6 @@ int main() {
         }
 
         cout << "Cliente conectado" << endl;
-        send(clientSocket, "Inicio de sesion correcto", 30, 0);
         char msg[1024];
         ssize_t bytesRead;
         bool success = true;
@@ -62,19 +61,21 @@ int main() {
         while (success) {
             ssize_t msgRead = recv(clientSocket, msg, sizeof(msg), 0);
             msg[msgRead] = '\0';
-
-
-            cout << "Mensaje recivido: " << msg << endl;
-            if (string(msg) == "salir") {
+            cout << "Mensaje recibido: " << msg << endl;
+            string responseMsg = "El mensaje recibido fue: " + string(msg);
+            if (string(msg) == "Salir") {
+                send(clientSocket, responseMsg.c_str(), responseMsg.length(), 0);
                 close(clientSocket);
                 cout << "Cliente desconectado" << endl;
-                success = false;
-            } else {
-                string responceMsg = "El msg recivido fue: " + string(msg);
-                send(clientSocket, responceMsg.c_str(), responceMsg.length(), 0);
+                break; // Salir del bucle interior
+            }
+            else {
+                send(clientSocket, responseMsg.c_str(), responseMsg.length(), 0);
             }
         }
     }
+
+    // El servidor seguirá esperando nuevas conexiones sin terminar
 
     return 0;
 }
