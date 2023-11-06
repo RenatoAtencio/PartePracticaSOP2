@@ -7,11 +7,7 @@
 
 using namespace std;
 
-int main() {
-    int serverSocket, clientSocket;
-    struct sockaddr_in serverAddr, clientAddr;
-    socklen_t clientAddrLen = sizeof(clientAddr);
-
+int startServer(int& serverSocket, sockaddr_in& serverAddr, sockaddr_in& clientAddr) {
     // Crear el socket del servidor
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket == -1) {
@@ -38,8 +34,16 @@ int main() {
         close(serverSocket);
         exit(EXIT_FAILURE);
     }
-
     cout << "Esperando conexiones entrantes..." << endl;
+    return 1;
+}
+
+int main() {
+    int serverSocket, clientSocket;
+    struct sockaddr_in serverAddr, clientAddr;
+    socklen_t clientAddrLen = sizeof(clientAddr);
+
+    startServer(serverSocket, serverAddr, clientAddr);
 
     while (true) {
         // Aceptar la conexión entrante
@@ -50,18 +54,25 @@ int main() {
         }
 
         cout << "Cliente conectado" << endl;
+        send(clientSocket, "Inicio de sesion correcto", 30, 0);
+        char msg[1024];
+        ssize_t bytesRead;
+        bool success = true;
 
-        // Leer y verificar las credenciales del cliente
-        char buffer[1024];
-        ssize_t bytesRead, optionRead;
+        while (success) {
+            ssize_t msgRead = recv(clientSocket, msg, sizeof(msg), 0);
+            msg[msgRead] = '\0';
 
-        while (true) {
-            bytesRead = recv(clientSocket, buffer, sizeof(buffer), 0);
-            buffer[bytesRead] = '\0';
-            string msg = string(buffer);
-            string resp = "Cliente conectado, el msg recibido fue: " + msg;
-            cout << "Mensaje enviado: " << resp << endl;
-            send(clientSocket, resp.c_str(), resp.length(), 0);
+
+            cout << "Mensaje recivido: " << msg << endl;
+            if (string(msg) == "salir") {
+                close(clientSocket);
+                cout << "Cliente desconectado" << endl;
+                success = false;
+            } else {
+                string responceMsg = "El msg recivido fue: " + string(msg);
+                send(clientSocket, responceMsg.c_str(), responceMsg.length(), 0);
+            }
         }
     }
 

@@ -3,6 +3,7 @@
         "ostream": "cpp",
         "*.tcc": "cpp",
         "fstream": "cpp",
-        "locale": "cpp"
+        "locale": "cpp",
+        "iostream": "cpp"
     }
 }
