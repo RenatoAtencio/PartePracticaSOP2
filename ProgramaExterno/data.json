@@ -1,0 +1,26 @@
+[
+    {
+        "dato": "Información 5",
+        "id": 5,
+        "nombre": "Ejemplo 5"
+    },
+    {
+        "dato": "Información 4",
+        "id": 4,
+        "nombre": "Ejemplo 4"
+    },
+    {
+        "dato": "Información 3",
+        "id": 3,
+        "nombre": "Ejemplo 3"
+    },
+    {
+        "dato": "Información 3",
+        "id": 3,
+        "mi_lista": [
+            "elemento1",
+            "elemento2"
+        ],
+        "nombre": "Ejemplo 3"
+    }
+]
