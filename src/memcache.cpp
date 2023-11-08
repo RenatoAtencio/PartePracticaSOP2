@@ -4,8 +4,17 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <fstream>
+#include "../include/json.hpp"
 
+using json = nlohmann::json;
 using namespace std;
+
+// Variables de entorno
+const string HOST = "./memcache";
+const string FRONT = "./searcher";
+const string BACK = "./invertedindex";
+const int MEMORYSIZE = 4;
 
 // Funcion para conectar a un servidor, necesita la ip del servidor y el puerto del servidor
 int connectToServer(const string& serverIP, int serverPort) {
@@ -95,7 +104,7 @@ int main() {
 
     while (true) {
         // Aceptar la conexión entrante
-        searcherSocket = accept(memcacheSocket, (struct sockaddr*)&searcherAddr, &clientAddrLen);
+        searcherSocket = accept(memcacheSocket, (struct sockaddr*)&searcherAddr, &clientAddrLen); // Acepta la conexion del searcher
         if (searcherSocket == -1) {
             perror("Error al aceptar la conexión");
             continue; // Continuar esperando conexiones
@@ -108,31 +117,65 @@ int main() {
         while (success) {
             ssize_t msgRead = recv(searcherSocket, msg, sizeof(msg), 0);
             msg[msgRead] = '\0';
-            cout << "Mensaje recibido: " << msg << endl;
-            string responseMsg = "El mensaje recibido fue: " + string(msg);
-            if (string(msg) == "Salir") {
-                send(searcherSocket, responseMsg.c_str(), responseMsg.length(), 0);
-                close(searcherSocket);
-                cout << "Cliente desconectado" << endl;
-                break; // Salir del bucle interior
+            cout << "Mensaje recibido: " << msg << endl; // Mensaje enviado por el searcher 
+
+            // Aqui hacer el parse del msg para obtener el txtToSearch (Todo esto fue hecho con el nlohmann)
+            string txtToSearch;
+            string jsonString = string(msg);
+
+            // Reemplazar comillas simples por comillas dobles
+            replace(jsonString.begin(), jsonString.end(), '\'', '\"');
+
+            // Analizar el string JSON
+            json jsonData = json::parse(jsonString);
+
+            // Acceder a la variable 'txtToSearch' en el contexto
+            txtToSearch = jsonData["contexto"]["txtToSearch"];
+
+            cout << "Valor de txtToSearch: " << txtToSearch << std::endl;
+
+            // Aqui ver si el txtToSearch esta en el json del cache
+            bool encontrado = true; // Este bool sera el que indica si se encuantra o no la busqueda
+            // recorrer el json, comparar 'busqueda' a txtToSearch
+            // Si lo encuentra entonces encontrado = true
+
+
+
+
+            if (encontrado == true) { // Si se encontro la busqueda en cache
+                // Tomar lo del json y parsearlo en el tipo de msg que pide
+                
+                string resp;
+                send(searcherSocket, resp.c_str(), resp.length(), 0); // envia la respuesta al searcher
             }
-            else if (string(msg) == "Conectar Index") {
+            else { // Si no se encontro en cache se debe enviar el msg al indice invertido
                 string serverIP = "127.0.0.1";  // Dirección IP del servidor
                 int invIndexPort = 12346;       // Puerto del servidor de inverted index
-                int index_socket = connectToServer(serverIP, invIndexPort); //Conectar al servidor, si no se pudo se termina la ejecucion
-                sendMessage(index_socket, msg);
-                string resp = recieveServerMessage(index_socket);
+                int index_socket = connectToServer(serverIP, invIndexPort); //Conectar al servidor del index, si no se pudo se termina la ejecucion
+
+                string commandMsg = "python3 src/format.py 1 " + FRONT + " " + BACK + " " + txtToSearch; // Llamo al prog externo para crear el formato del msg
+                int successMsg = system(commandMsg.c_str());
+                string msgToIndex; // msg que se enviara al index
+                if (successMsg == 0) {
+                    ifstream readMsg;
+                    readMsg.open("data/msg.txt");
+                    string line;
+                    while (getline(readMsg, line)) {
+                        msgToIndex += line; // Agregar cada línea al contenido
+                    }
+                }
+                else {
+                    cout << "No se pudo llamar al programa externo para crear el msg";
+                    exit(EXIT_FAILURE);
+                }
+
+                sendMessage(index_socket, msgToIndex); // se envia el msg al index
+                string resp = recieveServerMessage(index_socket); // respuesta del index
                 cout << "La respuesta del index es: " << resp << endl;
                 close(index_socket);
-                send(searcherSocket, resp.c_str(), resp.length(), 0);
-            }
-            else {
-                send(searcherSocket, responseMsg.c_str(), responseMsg.length(), 0);
+                send(searcherSocket, resp.c_str(), resp.length(), 0); // envia la respuesta del index al searcher (La respuesta del index ya deberia de estar con el formato correcto)
             }
         }
     }
-
-    // El servidor seguirá esperando nuevas conexiones sin terminar
-
     return 0;
 }

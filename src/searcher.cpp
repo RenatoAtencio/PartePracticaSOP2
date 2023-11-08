@@ -8,9 +8,9 @@
 
 using namespace std;
 
+// Variables de entorno
 const string FROM = "./searcher";
 const string TO = "./memcache";
-
 
 // Funcion para conectar a un servidor, necesita la ip del servidor y el puerto del servidor
 int connectToServer(const string& serverIP, int serverPort) {

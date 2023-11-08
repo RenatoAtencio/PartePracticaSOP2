@@ -7,6 +7,12 @@
 
 using namespace std;
 
+// Variables de entorno
+const string FROM = "./searcher";
+const string TO = "./memcache";
+const string _FILE = "inverted_index_file.idx"; // (Solo FILE dabe error, colisionaba con algo parece)
+const int TOPK = 4;
+
 int startServer(int& invIndexSocket, sockaddr_in& invIndexAddr, sockaddr_in& memcacheAddr) {
     // Crear el socket del servidor
     invIndexSocket = socket(AF_INET, SOCK_STREAM, 0);

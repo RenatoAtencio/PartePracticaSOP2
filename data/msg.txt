@@ -1,1 +1,1 @@
-{'origen': './searcher', 'destino': './memcache', 'contexto': {'txtToSearch': 'HGola'}}
+{'origen': './searcher', 'destino': './memcache', 'contexto': {'txtToSearch': 'Salir'}}
