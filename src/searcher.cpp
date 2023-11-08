@@ -4,8 +4,13 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <fstream>
 
 using namespace std;
+
+const string FROM = "./searcher";
+const string TO = "./memcache";
+
 
 // Funcion para conectar a un servidor, necesita la ip del servidor y el puerto del servidor
 int connectToServer(const string& serverIP, int serverPort) {
@@ -39,7 +44,7 @@ void sendMessage(int connectionSocket, const string& message) {
 }
 
 // Recivir la respuesta del servidor
-string recieveServerMessage(int connectionSocket){
+string recieveServerMessage(int connectionSocket) {
     char buffer[1024];
     ssize_t bytesRead = recv(connectionSocket, buffer, sizeof(buffer), 0);
     if (bytesRead == -1) {
@@ -58,11 +63,31 @@ int main() {
     int memcachePort = 12345;       // Puerto del servidor memcache
     int searcher_memcache_Socket = connectToServer(serverIP, memcachePort); //Socket entre el searcher y el memcache (Con este uno envia y recive msg del o al memcache)
 
-    string msg;
+    string userInput;
     bool again = true;
     while (again) {
         cout << "ingrese su busqueda: ";
-        getline(cin, msg);
+        getline(cin, userInput);
+
+        // string from = string(getenv("FROM"));
+        // string to = string(getenv("TO"));
+
+        string commandMsg = "python3 src/format.py 1 " + FROM + " " + TO + " " + userInput;
+        int successMsg = system(commandMsg.c_str());
+        string msg;
+        if (successMsg == 0) {
+            ifstream readMsg;
+            readMsg.open("data/msg.txt");
+            string line;
+            while (getline(readMsg, line)) {
+                msg += line; // Agregar cada línea al contenido
+            }
+        }
+        else {
+            cout << "No se pudo llamar al programa externo para crear el msg";
+            exit(EXIT_FAILURE);
+        }
+
         sendMessage(searcher_memcache_Socket, msg);
         string response = recieveServerMessage(searcher_memcache_Socket);
         cout << "Mensaje de respuesta del servidor: " << response << endl;
