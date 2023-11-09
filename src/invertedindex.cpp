@@ -4,7 +4,11 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include "../include/json.hpp"
+#include <chrono>
+#include <fstream>
 
+using json = nlohmann::json;
 using namespace std;
 
 // Variables de entorno
@@ -68,9 +72,65 @@ int main() {
             msg[msgRead] = '\0';
             cout << "Mensaje recibido: " << msg << endl;
             string responseMsg = "El mensaje recibido fue: " + string(msg);
-            send(memcacheSocket, responseMsg.c_str(), responseMsg.length(), 0);
-            close(memcacheSocket);
-            cout << "Cliente desconectado" << endl;
+
+            // Aqui hacer el parse del msg para obtener el txtToSearch (Todo esto fue hecho con el nlohmann)
+            string txtToSearch;
+            string jsonString = string(msg);
+
+            // Reemplazar comillas simples por comillas dobles
+            replace(jsonString.begin(), jsonString.end(), '\'', '\"');
+
+            // Analizar el string JSON
+            json jsonData = json::parse(jsonString);
+
+            // Acceder a la variable 'txtToSearch' en el contexto
+            txtToSearch = jsonData["contexto"]["txtToSearch"];
+
+            auto start = chrono::high_resolution_clock::now();
+            string commandSearch = "./buscador data/ file.idx " + txtToSearch + " 4";
+            int successSearch = system(commandSearch.c_str());
+            auto end = chrono::high_resolution_clock::now();
+            auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+            string msg;
+            if (successSearch == 0) {
+                ifstream readMsg;
+                readMsg.open("data/invIndexOutput.txt");
+                string line;
+                while (getline(readMsg, line)) {
+                    msg += line; // Agregar cada línea al contenido
+                }
+
+                string origen, destino, tiempo, ori, isFound, resultado;
+                origen = FROM;
+                destino = TO;
+                tiempo = to_string(duration);
+                ori = "BACKEND";
+                isFound = "true";
+                resultado = msg;
+
+                string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " " + tiempo + " " + ori + " " + isFound + " '" + resultado + "'";
+                int successResp = system(commandResp.c_str());
+                string msgToFront;
+                if (successResp == 0) {
+                    ifstream readMsg;
+                    readMsg.open("data/msg.txt");
+                    string line;
+                    while (getline(readMsg, line)) {
+                        msgToFront += line; // Agregar cada línea al contenido
+                    }
+                }
+                else {
+                    cout << "No se pudo llamar al programa externo para crear el msg";
+                    exit(EXIT_FAILURE);
+                }
+                send(memcacheSocket, msgToFront.c_str(), msgToFront.length(), 0);
+                close(memcacheSocket);
+                cout << "Cliente desconectado" << endl;
+            }
+            else {
+                cout << "No se pudo llamar al buscador" << endl;
+                exit(EXIT_FAILURE);
+            }
             break; // Salir del bucle interior
         }
     }

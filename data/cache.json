@@ -22,7 +22,7 @@
   {
     "Busqueda": "Blue",
     "Respuesta": [
-      { "archivo": "texto1", "puntaje": "cant1" },
+      { "archivo": "texto1", "puntaje": 1 },
       { "archivo": "texto2", "puntaje": "cant2" },
       { "archivo": "texto3", "puntaje": "cant3" },
       { "archivo": "texto4", "puntaje": "cant4" },

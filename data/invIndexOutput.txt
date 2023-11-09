@@ -1,0 +1,1 @@
+[{ "archivo": "file014.txt", "puntaje": 9 }, { "archivo": "file018.txt", "puntaje": 9 }, { "archivo": "file019.txt", "puntaje": 7 }, { "archivo": "file013.txt", "puntaje": 4 }]

@@ -13,9 +13,10 @@ OBJS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 # Nombre de los programas ejecutables
 TARGET1 = searcher  # Primer programa
 TARGET2 = memcache  # Segundo programa
-TARGET3 = invertedindex  # Tercer progrma
+TARGET3 = invertedindex  # Tercer progrma 
+TARGET4 = buscador
 
-all: $(TARGET1) $(TARGET2) $(TARGET3)
+all: $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4)
 
 $(TARGET1): $(OBJ_DIR)/searcher.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
@@ -26,8 +27,11 @@ $(TARGET2): $(OBJ_DIR)/memcache.o
 $(TARGET3): $(OBJ_DIR)/invertedindex.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
+$(TARGET4): $(OBJ_DIR)/buscador.o
+	$(CXX) $(CXXFLAGS) -o $@ $^	
+
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clean:
-	rm -rf $(TARGET1) $(TARGET2) $(TARGET3)
+	rm -rf $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4)
