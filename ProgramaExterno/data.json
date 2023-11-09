@@ -1,10 +1,5 @@
 [
     {
-        "dato": "Información 5",
-        "id": 5,
-        "nombre": "Ejemplo 5"
-    },
-    {
         "dato": "Información 4",
         "id": 4,
         "nombre": "Ejemplo 4"
@@ -22,5 +17,22 @@
             "elemento2"
         ],
         "nombre": "Ejemplo 3"
+    },
+    {
+        "Busqueda": "holachao",
+        "Resultado": [
+            {
+                "file-text1.txt": "122"
+            },
+            {
+                "file-text20.txt": "34"
+            },
+            {
+                "file-text3.txt": "10"
+            },
+            {
+                "file-text2.txt": "2"
+            }
+        ]
     }
 ]
