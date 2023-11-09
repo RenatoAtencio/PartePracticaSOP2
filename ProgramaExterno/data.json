@@ -1,38 +1,19 @@
 [
-    {
-        "dato": "Información 4",
-        "id": 4,
-        "nombre": "Ejemplo 4"
-    },
-    {
-        "dato": "Información 3",
-        "id": 3,
-        "nombre": "Ejemplo 3"
-    },
-    {
-        "dato": "Información 3",
-        "id": 3,
-        "mi_lista": [
-            "elemento1",
-            "elemento2"
-        ],
-        "nombre": "Ejemplo 3"
-    },
-    {
-        "Busqueda": "holachao",
-        "Resultado": [
-            {
-                "file-text1.txt": "122"
-            },
-            {
-                "file-text20.txt": "34"
-            },
-            {
-                "file-text3.txt": "10"
-            },
-            {
-                "file-text2.txt": "2"
-            }
-        ]
-    }
+  {
+    "Busqueda": "",
+    "Resultado": [
+      {
+        "file-text1.txt": "122"
+      },
+      {
+        "file-text20.txt": "34"
+      },
+      {
+        "file-text3.txt": "10"
+      },
+      {
+        "file-text2.txt": "2"
+      }
+    ]
+  }
 ]

@@ -220,10 +220,18 @@ int main() {
                     exit(EXIT_FAILURE);
                 }
 
+                // llamar al prog externo
                 sendMessage(index_socket, msgToIndex); // se envia el msg al index
                 string resp = recieveServerMessage(index_socket); // respuesta del index
-                // parcearla para agrarla al index
-                // llamar al prog externo
+
+                string commandAddToJson = "./programa '" + resp + "' " + to_string(MEMORYSIZE);
+                int successAdd = system(commandAddToJson.c_str());
+                if (successAdd == 0) {
+                    cout << "Ultima busqueda agregada al cache" << endl;
+                } else {
+                    cout << "No se puedo llamar al programa externo" << endl;
+                    exit(EXIT_FAILURE);
+                }
 
                 cout << "La respuesta del index es: " << resp << endl;
                 close(index_socket);
