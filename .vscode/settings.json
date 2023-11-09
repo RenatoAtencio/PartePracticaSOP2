@@ -5,6 +5,7 @@
         "fstream": "cpp",
         "locale": "cpp",
         "iostream": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "chrono": "cpp"
     }
 }

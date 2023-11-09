@@ -19,7 +19,6 @@ match mode:
             },
         }
         file.write(json.dumps(msg))
-        print(msg)
     case "2":
         msg = { # Mensaje de respuesta
             'origen' : sys.argv[2],
@@ -32,4 +31,3 @@ match mode:
             }
         }
         file.write(json.dumps(msg))
-        print(msg)

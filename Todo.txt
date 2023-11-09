@@ -1,1 +1,0 @@
-- Indicar cuando el server esta en uso (Si se conecta un 2do usuario espera pero no le dice que esta esperando.)

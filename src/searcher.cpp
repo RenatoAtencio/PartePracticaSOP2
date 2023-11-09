@@ -6,7 +6,9 @@
 #include <sys/socket.h>
 #include <fstream>
 #include <limits>
+#include "../include/json.hpp"
 
+using json = nlohmann::json;
 using namespace std;
 
 // Variables de entorno
@@ -89,15 +91,23 @@ int main() {
         }
 
         sendMessage(searcher_memcache_Socket, msg);
-        string response = recieveServerMessage(searcher_memcache_Socket);
-        cout << "Mensaje de respuesta del servidor: " << response << endl;
-
         // Respuesta 
-        cout << "Respuesta (Tiempo: x, Origen: y )" << endl;
+        string response = recieveServerMessage(searcher_memcache_Socket);
+        json jsonData = json::parse(response);
+        string tiempo = jsonData["contexto"]["tiempo"];
+        string origen = jsonData["contexto"]["ori"];
+        json jsonArray = jsonData["contexto"]["resultados"];
+
+        cout << "Respuesta (Tiempo: " << tiempo << "ns, Origen: " << origen << ")" << endl;
+        int index = 1;
+        for (const auto& elemento : jsonArray) {
+            cout << index << ") " << elemento["archivo"] << " " << elemento["puntaje"] << endl;
+            index++;
+        }
 
         // salir
         char salir;
-        cout << "Desea salir? (s/n): " << endl;
+        cout << "Desea salir? (s/n): ";
         cin >> salir;
         cin.ignore(numeric_limits<streamsize>::max(), '\n'); //Limpia el buffer para que al poner la respuesta no mande algo vacio al server
         if (salir == 's') {

@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <fstream>
 #include "../include/json.hpp"
+#include <chrono>
 
 using json = nlohmann::json;
 using namespace std;
@@ -156,44 +157,49 @@ int main() {
             fileStream >> jsonArray;
             fileStream.close();
 
+            auto start = chrono::high_resolution_clock::now();
             int index = 0;
-            for (const auto& elemento : jsonArray) { 
+            for (const auto& elemento : jsonArray) {
                 if (elemento["Busqueda"] == txtToSearch) {
                     // Se encontró una coincidencia
                     encontrado = true;
                     index++;
                 }
             }
+            auto end = chrono::high_resolution_clock::now();
+            auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count(); // El tiempo lo puse solo en lo que se demora en buscar
 
             // recorrer el json, comparar 'busqueda' a txtToSearch
             // Si lo encuentra entonces encontrado = true y devolver el elemnto
 
             if (encontrado == true) { // Si se encontro la busqueda en cache
                 // Tomar lo del json y parsearlo en el tipo de msg que pide
-                string origen,destino,tiempo,ori,isFound,resultado;
+                string origen, destino, tiempo, ori, isFound, resultado;
                 origen = HOST;
                 destino = FRONT;
-                tiempo = "10ms"; // cambiar
+                tiempo = to_string(duration);
                 ori = "MEMCACHE";
                 isFound = "true";
-                resultado = jsonArray[index]["Respuesta"].dump(); 
+                resultado = jsonArray[index]["Respuesta"].dump();
 
                 string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " " + tiempo + " " + ori + " " + isFound + " '" + resultado + "'";
                 int successResp = system(commandResp.c_str());
                 string msgToFront;
-                if (successResp == 0){
+                if (successResp == 0) {
                     ifstream readMsg;
                     readMsg.open("data/msg.txt");
                     string line;
                     while (getline(readMsg, line)) {
                         msgToFront += line; // Agregar cada línea al contenido
                     }
-                } else {
+                }
+                else {
                     cout << "No se pudo llamar al programa externo para crear el msg";
                     exit(EXIT_FAILURE);
                 }
                 send(searcherSocket, msgToFront.c_str(), msgToFront.length(), 0);
-            } else { // Si no se encontro en cache se debe enviar el msg al indice invertido
+            }
+            else { // Si no se encontro en cache se debe enviar el msg al indice invertido
                 string serverIP = "127.0.0.1";  // Dirección IP del servidor
                 int invIndexPort = 12346;       // Puerto del servidor de inverted index
                 int index_socket = connectToServer(serverIP, invIndexPort); //Conectar al servidor del index, si no se pudo se termina la ejecucion

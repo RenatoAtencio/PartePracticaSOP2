@@ -1,1 +1,1 @@
-{"origen": "./searcher", "destino": "./invertedindex", "contexto": {"txtToSearch": "HIla"}}
+{"origen": "./memcache", "destino": "./searcher", "contexto": {"tiempo": "1630", "ori": "MEMCACHE", "isFound": "true", "resultados": [{"archivo": "texto1", "puntaje": "cant1"}, {"archivo": "texto2", "puntaje": "cant2"}, {"archivo": "texto3", "puntaje": "cant3"}, {"archivo": "texto4", "puntaje": "cant4"}, {"archivo": "texto5", "puntaje": "cant5"}]}}
