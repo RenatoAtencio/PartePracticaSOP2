@@ -95,6 +95,16 @@ int startServer(int& serverSocket, sockaddr_in& serverAddr) {
     return 1; // Devuelve 1 si se pudo crear el server
 }
 
+json loadJSON(const string& filename) {
+    json jsonData;
+    ifstream file(filename);
+    if (file.is_open()) {
+        file >> jsonData;
+        file.close();
+    }
+    return jsonData;
+}
+
 int main() {
     int memcacheSocket, searcherSocket;
     struct sockaddr_in memcacheAddr, searcherAddr;
@@ -132,23 +142,58 @@ int main() {
             // Acceder a la variable 'txtToSearch' en el contexto
             txtToSearch = jsonData["contexto"]["txtToSearch"];
 
-            cout << "Valor de txtToSearch: " << txtToSearch << std::endl;
+            cout << "Valor de txtToSearch: " << txtToSearch << endl;
 
             // Aqui ver si el txtToSearch esta en el json del cache
-            bool encontrado = true; // Este bool sera el que indica si se encuantra o no la busqueda
+            bool encontrado = false; // Este bool sera el que indica si se encuantra o no la busqueda
+            string filename = "data/cache.json";
+            ifstream fileStream(filename);
+            if (!fileStream.is_open()) {
+                cerr << "Error al abrir el archivo JSON." << endl;
+                exit(EXIT_FAILURE);
+            }
+            json jsonArray;
+            fileStream >> jsonArray;
+            fileStream.close();
+
+            int index = 0;
+            for (const auto& elemento : jsonArray) { 
+                if (elemento["Busqueda"] == txtToSearch) {
+                    // Se encontró una coincidencia
+                    encontrado = true;
+                    index++;
+                }
+            }
+
             // recorrer el json, comparar 'busqueda' a txtToSearch
-            // Si lo encuentra entonces encontrado = true
-
-
-
+            // Si lo encuentra entonces encontrado = true y devolver el elemnto
 
             if (encontrado == true) { // Si se encontro la busqueda en cache
                 // Tomar lo del json y parsearlo en el tipo de msg que pide
-                
-                string resp;
-                send(searcherSocket, resp.c_str(), resp.length(), 0); // envia la respuesta al searcher
-            }
-            else { // Si no se encontro en cache se debe enviar el msg al indice invertido
+                string origen,destino,tiempo,ori,isFound,resultado;
+                origen = HOST;
+                destino = FRONT;
+                tiempo = "10ms"; // cambiar
+                ori = "MEMCACHE";
+                isFound = "true";
+                resultado = jsonArray[index]["Respuesta"].dump(); 
+
+                string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " " + tiempo + " " + ori + " " + isFound + " '" + resultado + "'";
+                int successResp = system(commandResp.c_str());
+                string msgToFront;
+                if (successResp == 0){
+                    ifstream readMsg;
+                    readMsg.open("data/msg.txt");
+                    string line;
+                    while (getline(readMsg, line)) {
+                        msgToFront += line; // Agregar cada línea al contenido
+                    }
+                } else {
+                    cout << "No se pudo llamar al programa externo para crear el msg";
+                    exit(EXIT_FAILURE);
+                }
+                send(searcherSocket, msgToFront.c_str(), msgToFront.length(), 0);
+            } else { // Si no se encontro en cache se debe enviar el msg al indice invertido
                 string serverIP = "127.0.0.1";  // Dirección IP del servidor
                 int invIndexPort = 12346;       // Puerto del servidor de inverted index
                 int index_socket = connectToServer(serverIP, invIndexPort); //Conectar al servidor del index, si no se pudo se termina la ejecucion
@@ -171,6 +216,9 @@ int main() {
 
                 sendMessage(index_socket, msgToIndex); // se envia el msg al index
                 string resp = recieveServerMessage(index_socket); // respuesta del index
+                // parcearla para agrarla al index
+                // llamar al prog externo
+
                 cout << "La respuesta del index es: " << resp << endl;
                 close(index_socket);
                 send(searcherSocket, resp.c_str(), resp.length(), 0); // envia la respuesta del index al searcher (La respuesta del index ya deberia de estar con el formato correcto)

@@ -94,7 +94,7 @@ int main(int argc, char* argv[]) { // ./programa string(mensaje) MEMORY
     // Imprimir el JSON resultante
     //cout << jsonData.dump(4) << endl;
 
-    cout << "Archivo data.json generado correctamente " << endl;
+    cout << "Archivo data.json generado correctamente" << endl;
 
-    return 0;
+    return 0;  
 }

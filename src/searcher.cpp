@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <fstream>
+#include <limits>
 
 using namespace std;
 
@@ -63,16 +64,15 @@ int main() {
     int memcachePort = 12345;       // Puerto del servidor memcache
     int searcher_memcache_Socket = connectToServer(serverIP, memcachePort); //Socket entre el searcher y el memcache (Con este uno envia y recive msg del o al memcache)
 
-    string userInput;
+    cout << "Buscador basado en indice invertido (" << getpid() << ")" << endl;
+
     bool again = true;
     while (again) {
-        cout << "ingrese su busqueda: ";
+        string userInput;
+        cout << "Escriba texto a buscar: ";
         getline(cin, userInput);
 
-        // string from = string(getenv("FROM"));
-        // string to = string(getenv("TO"));
-
-        string commandMsg = "python3 src/format.py 1 " + FROM + " " + TO + " " + userInput;
+        string commandMsg = "python3 src/format.py 1 " + FROM + " " + TO + " '" + userInput + "'";
         int successMsg = system(commandMsg.c_str());
         string msg;
         if (successMsg == 0) {
@@ -91,7 +91,16 @@ int main() {
         sendMessage(searcher_memcache_Socket, msg);
         string response = recieveServerMessage(searcher_memcache_Socket);
         cout << "Mensaje de respuesta del servidor: " << response << endl;
-        if (msg == "Salir") {
+
+        // Respuesta 
+        cout << "Respuesta (Tiempo: x, Origen: y )" << endl;
+
+        // salir
+        char salir;
+        cout << "Desea salir? (s/n): " << endl;
+        cin >> salir;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); //Limpia el buffer para que al poner la respuesta no mande algo vacio al server
+        if (salir == 's') {
             cout << "Se ha desconectado" << endl;
             close(searcher_memcache_Socket);
             exit(EXIT_FAILURE);
