@@ -61,6 +61,51 @@ string recieveServerMessage(int connectionSocket) {
     return buffer;
 }
 
+/* Genera el string del mensaje de busqueda, el formato es
+    mensaje = {
+        "origen" : "origen",
+        "destino" : "destino",
+        "contexto" : {
+            "txtToSearch" : "busqueda"
+        }
+    }
+*/
+string generarMsgBusqueda(string origen, string destino, string busqueda) {
+    string commandMsg = "python3 src/format.py 1 " + origen + " " + destino + " '" + busqueda + "'";
+    int successMsg = system(commandMsg.c_str());
+    string msg;
+    if (successMsg == 0) {
+        ifstream readMsg;
+        readMsg.open("data/msg.txt");
+        string line;
+        while (getline(readMsg, line)) {
+            msg += line; // Agregar cada línea al contenido
+        }
+        return (msg);
+    }
+    else {
+        cout << "No se pudo llamar al programa externo para crear el msg";
+        exit(EXIT_FAILURE);
+    }
+}
+
+void imprimirResultado(string respuesta) {
+    json jsonData = json::parse(respuesta);
+    string tiempo = jsonData["contexto"]["tiempo"];
+    string origen = jsonData["contexto"]["ori"];
+    json jsonArray = jsonData["contexto"]["resultados"];
+
+    cout << "Respuesta (Tiempo: " << tiempo << "ns, Origen: " << origen << ")" << endl;
+    int index = 1;
+    for (const auto& elemento : jsonArray) {
+        cout << index << ") " << elemento["archivo"] << " " << elemento["puntaje"] << endl;
+        index++;
+    }
+}
+
+/*
+    Lo que falta: cargar las var de entorno desde un json
+*/
 int main() {
     string serverIP = "127.0.0.1";  // Dirección IP del servidor
     int memcachePort = 12345;       // Puerto del servidor memcache
@@ -74,38 +119,15 @@ int main() {
         cout << "Escriba texto a buscar: ";
         getline(cin, userInput);
 
-        string commandMsg = "python3 src/format.py 1 " + FROM + " " + TO + " '" + userInput + "'";
-        int successMsg = system(commandMsg.c_str());
-        string msg;
-        if (successMsg == 0) {
-            ifstream readMsg;
-            readMsg.open("data/msg.txt");
-            string line;
-            while (getline(readMsg, line)) {
-                msg += line; // Agregar cada línea al contenido
-            }
-        }
-        else {
-            cout << "No se pudo llamar al programa externo para crear el msg";
-            exit(EXIT_FAILURE);
-        }
-
+        // Generar y enviar msg a memcache
+        string msg = generarMsgBusqueda(FROM, TO, userInput);
         sendMessage(searcher_memcache_Socket, msg);
-        // Respuesta 
+
+        // Recibir e imprimir respuesta 
         string response = recieveServerMessage(searcher_memcache_Socket);
-        json jsonData = json::parse(response);
-        string tiempo = jsonData["contexto"]["tiempo"];
-        string origen = jsonData["contexto"]["ori"];
-        json jsonArray = jsonData["contexto"]["resultados"];
+        imprimirResultado(response);
 
-        cout << "Respuesta (Tiempo: " << tiempo << "ns, Origen: " << origen << ")" << endl;
-        int index = 1;
-        for (const auto& elemento : jsonArray) {
-            cout << index << ") " << elemento["archivo"] << " " << elemento["puntaje"] << endl;
-            index++;
-        }
-
-        // salir
+        // Salir
         char salir;
         cout << "Desea salir? (s/n): ";
         cin >> salir;
@@ -116,6 +138,5 @@ int main() {
             exit(EXIT_FAILURE);
         }
     }
-    //close(searcherSocket);
     return 0;
 }

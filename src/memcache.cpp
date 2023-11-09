@@ -63,6 +63,34 @@ string recieveServerMessage(int connectionSocket) {
     return buffer;
 }
 
+/* Genera el string del mensaje de busqueda, el formato es
+    mensaje = {
+        "origen" : "origen",
+        "destino" : "destino",
+        "contexto" : {
+            "txtToSearch" : "busqueda"
+        }
+    }
+*/
+string generarMsgBusqueda(string origen, string destino, string busqueda) {
+    string commandMsg = "python3 src/format.py 1 " + origen + " " + destino + " '" + busqueda + "'";
+    int successMsg = system(commandMsg.c_str());
+    string msg;
+    if (successMsg == 0) {
+        ifstream readMsg;
+        readMsg.open("data/msg.txt");
+        string line;
+        while (getline(readMsg, line)) {
+            msg += line; // Agregar cada línea al contenido
+        }
+        return (msg);
+    }
+    else {
+        cout << "No se pudo llamar al programa externo para crear el msg";
+        exit(EXIT_FAILURE);
+    }
+}
+
 // Comienza un server, con puerto 12345 y ip "127.0.0.1" (Tecnicamente es cualquier ip porque el INADDR_ANY escucha a toda la maquina, el socket es lo que diferenciara a los servers)
 int startServer(int& serverSocket, sockaddr_in& serverAddr) {
     // Crear el socket del servidor
@@ -96,6 +124,7 @@ int startServer(int& serverSocket, sockaddr_in& serverAddr) {
     return 1; // Devuelve 1 si se pudo crear el server
 }
 
+// Carga un json
 json loadJSON(const string& filename) {
     json jsonData;
     ifstream file(filename);
@@ -106,16 +135,88 @@ json loadJSON(const string& filename) {
     return jsonData;
 }
 
+// Toma el mensaje y devuelve la busqueda hecha por el usuario
+string getSearchFromMsg(string msg) {
+    string txtToSearch;
+    string jsonString = string(msg);
+
+    // Carga el string como un json (hace mas facil el tomar la variable txtToSearch)
+    replace(jsonString.begin(), jsonString.end(), '\'', '\"');
+    json jsonData = json::parse(jsonString);
+    txtToSearch = jsonData["contexto"]["txtToSearch"];
+
+    cout << "Busqueda hecha por el cliente: " << txtToSearch << endl;
+    return (txtToSearch);
+}
+
+// Ve si la busqueda esta en la memoria
+bool verifyInCacheMemory(string txtToSearch, int& index, json& jsonArray) {
+    string filename = "data/cache.json";
+    ifstream fileStream(filename);
+    if (!fileStream.is_open()) {
+        cerr << "Error al abrir el archivo JSON." << endl;
+        exit(EXIT_FAILURE);
+    }
+    fileStream >> jsonArray;
+    fileStream.close();
+
+    for (const auto& elemento : jsonArray) {
+        if (elemento["Busqueda"] == txtToSearch) {
+            return (true);
+            index++;
+        }
+    }
+    return (false);
+}
+
+/*Genera el string del mensaje de respuesta, el formato es
+    mensaje = {
+        "origen": "origen",
+        "destino": "destino",
+        "contexto": {
+            "tiempo": "tiempo(ns)",
+            "ori": "origen",
+            "isFound": "ResultadoBusqueda",
+            "resultados" : [
+                {"archivo": "texto1", "puntaje": "cant1"},
+                {"archivo": "texto2", "puntaje": "cant2"},
+                {"archivo": "texto3", "puntaje": "cant3"},
+                {"archivo": "texto4", "puntaje": "cant4"},
+                {"archivo": "texto5", "puntaje": "cant5"}
+            ]
+        }
+    }
+*/
+string generarMsgRespuesta(string origen, string destino, string tiempo, string ori, string resultado) {
+    string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " " + tiempo + " " + ori + " '" + resultado + "'";
+    int successResp = system(commandResp.c_str());
+    string msgRespuesta;
+    if (successResp == 0) {
+        ifstream readMsg;
+        readMsg.open("data/msg.txt");
+        string line;
+        while (getline(readMsg, line)) {
+            msgRespuesta += line; // Agregar cada línea al contenido
+        }
+    }
+    else {
+        cout << "No se pudo llamar al programa externo para crear el msg";
+        exit(EXIT_FAILURE);
+    }
+    return (msgRespuesta);
+}
+
 int main() {
     int memcacheSocket, searcherSocket;
     struct sockaddr_in memcacheAddr, searcherAddr;
     socklen_t clientAddrLen = sizeof(searcherAddr);
 
+    // Se prende el server de la memcache
     startServer(memcacheSocket, memcacheAddr);
 
     while (true) {
-        // Aceptar la conexión entrante
-        searcherSocket = accept(memcacheSocket, (struct sockaddr*)&searcherAddr, &clientAddrLen); // Acepta la conexion del searcher
+        // Aceptar la conexión entrante (El searcher)
+        searcherSocket = accept(memcacheSocket, (struct sockaddr*)&searcherAddr, &clientAddrLen);
         if (searcherSocket == -1) {
             perror("Error al aceptar la conexión");
             continue; // Continuar esperando conexiones
@@ -126,112 +227,54 @@ int main() {
         bool success = true;
 
         while (success) {
-            ssize_t msgRead = recv(searcherSocket, msg, sizeof(msg), 0);
+            ssize_t msgRead = recv(searcherSocket, msg, sizeof(msg), 0); // Recibe el msg enviado por el searcher
             msg[msgRead] = '\0';
-            cout << "Mensaje recibido: " << msg << endl; // Mensaje enviado por el searcher 
+            cout << "Mensaje recibido: " << msg << endl;
 
-            // Aqui hacer el parse del msg para obtener el txtToSearch (Todo esto fue hecho con el nlohmann)
-            string txtToSearch;
-            string jsonString = string(msg);
+            // Se toma la busqueda hecha por el usuario desde el msg (que esta en formato json)
+            string txtToSearch = getSearchFromMsg(msg);
 
-            // Reemplazar comillas simples por comillas dobles
-            replace(jsonString.begin(), jsonString.end(), '\'', '\"');
-
-            // Analizar el string JSON
-            json jsonData = json::parse(jsonString);
-
-            // Acceder a la variable 'txtToSearch' en el contexto
-            txtToSearch = jsonData["contexto"]["txtToSearch"];
-
-            cout << "Valor de txtToSearch: " << txtToSearch << endl;
-
-            // Aqui ver si el txtToSearch esta en el json del cache
-            bool encontrado = false; // Este bool sera el que indica si se encuantra o no la busqueda
-            string filename = "data/cache.json";
-            ifstream fileStream(filename);
-            if (!fileStream.is_open()) {
-                cerr << "Error al abrir el archivo JSON." << endl;
-                exit(EXIT_FAILURE);
-            }
-            json jsonArray;
-            fileStream >> jsonArray;
-            fileStream.close();
-
-            auto start = chrono::high_resolution_clock::now();
+            // Buscar en memoria la busqueda, tambien se calcula el tiempo en caso de que si este en memoria
             int index = 0;
-            for (const auto& elemento : jsonArray) {
-                if (elemento["Busqueda"] == txtToSearch) {
-                    // Se encontró una coincidencia
-                    encontrado = true;
-                    index++;
-                }
-            }
+            json jsonArray; // Mensaje como json
+            auto start = chrono::high_resolution_clock::now();
+            bool encontrado = verifyInCacheMemory(txtToSearch, index, jsonArray); // Devuelve true si esta en memoria, falso si no
             auto end = chrono::high_resolution_clock::now();
             auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count(); // El tiempo lo puse solo en lo que se demora en buscar
 
-            // recorrer el json, comparar 'busqueda' a txtToSearch
-            // Si lo encuentra entonces encontrado = true y devolver el elemnto
-
-            if (encontrado == true) { // Si se encontro la busqueda en cache
-                // Tomar lo del json y parsearlo en el tipo de msg que pide
+            if (encontrado == true) { // Encontro la busqueda en la memoria
                 string origen, destino, tiempo, ori, isFound, resultado;
                 origen = HOST;
                 destino = FRONT;
                 tiempo = to_string(duration);
                 ori = "MEMCACHE";
-                isFound = "true";
                 resultado = jsonArray[index]["Respuesta"].dump();
+                string msgToFront = generarMsgRespuesta(origen, destino, tiempo, ori, resultado); // Generar msg de respuesta
 
-                string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " " + tiempo + " " + ori + " " + isFound + " '" + resultado + "'";
-                int successResp = system(commandResp.c_str());
-                string msgToFront;
-                if (successResp == 0) {
-                    ifstream readMsg;
-                    readMsg.open("data/msg.txt");
-                    string line;
-                    while (getline(readMsg, line)) {
-                        msgToFront += line; // Agregar cada línea al contenido
-                    }
-                }
-                else {
-                    cout << "No se pudo llamar al programa externo para crear el msg";
-                    exit(EXIT_FAILURE);
-                }
+                // Manda el msg de respuesta al searcher
                 send(searcherSocket, msgToFront.c_str(), msgToFront.length(), 0);
             }
-            else { // Si no se encontro en cache se debe enviar el msg al indice invertido
+            else { // Si no se encontro en memoria
                 string serverIP = "127.0.0.1";  // Dirección IP del servidor
                 int invIndexPort = 12346;       // Puerto del servidor de inverted index
-                int index_socket = connectToServer(serverIP, invIndexPort); //Conectar al servidor del index, si no se pudo se termina la ejecucion
+                int index_socket = connectToServer(serverIP, invIndexPort); // Conectar al servidor del index
 
-                string commandMsg = "python3 src/format.py 1 " + FRONT + " " + BACK + " " + txtToSearch; // Llamo al prog externo para crear el formato del msg
-                int successMsg = system(commandMsg.c_str());
-                string msgToIndex; // msg que se enviara al index
-                if (successMsg == 0) {
-                    ifstream readMsg;
-                    readMsg.open("data/msg.txt");
-                    string line;
-                    while (getline(readMsg, line)) {
-                        msgToIndex += line; // Agregar cada línea al contenido
-                    }
-                }
-                else {
-                    cout << "No se pudo llamar al programa externo para crear el msg";
-                    exit(EXIT_FAILURE);
-                }
+                string msgToIndex = generarMsgBusqueda(FRONT, BACK, txtToSearch); // Genera el msg de busqueda para enviarlo al index
 
-                // llamar al prog externo
-                sendMessage(index_socket, msgToIndex); // se envia el msg al index
-                string resp = recieveServerMessage(index_socket); // respuesta del index
+                // Enviar y recibir respuesta del index
+                sendMessage(index_socket, msgToIndex);
+                string resp = recieveServerMessage(index_socket);
 
-                string commandAddToJson = "./programa '" + resp + "' " + to_string(MEMORYSIZE);
-                int successAdd = system(commandAddToJson.c_str());
-                if (successAdd == 0) {
-                    cout << "Ultima busqueda agregada al cache" << endl;
-                } else {
-                    cout << "No se puedo llamar al programa externo" << endl;
-                    exit(EXIT_FAILURE);
-                }
+                // Agregar la respuesta del index a la memoria 
+                // string commandAddToJson = "./programa '" + resp + "' " + to_string(MEMORYSIZE);
+                // int successAdd = system(commandAddToJson.c_str());
+                // if (successAdd == 0) {
+                //     cout << "Ultima busqueda agregada al cache" << endl;
+                // }
+                // else {
+                //     cout << "No se puedo llamar al programa externo" << endl;
+                //     exit(EXIT_FAILURE);
+                // }
 
                 cout << "La respuesta del index es: " << resp << endl;
                 close(index_socket);

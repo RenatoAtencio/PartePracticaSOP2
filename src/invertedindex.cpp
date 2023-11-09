@@ -105,10 +105,9 @@ int main() {
                 destino = TO;
                 tiempo = to_string(duration);
                 ori = "BACKEND";
-                isFound = "true";
                 resultado = msg;
 
-                string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " " + tiempo + " " + ori + " " + isFound + " '" + resultado + "'";
+                string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " " + tiempo + " " + ori + " '" + resultado + "'";
                 int successResp = system(commandResp.c_str());
                 string msgToFront;
                 if (successResp == 0) {
@@ -134,8 +133,6 @@ int main() {
             break; // Salir del bucle interior
         }
     }
-
     // El servidor seguirá esperando nuevas conexiones sin terminar
-
     return 0;
 }
