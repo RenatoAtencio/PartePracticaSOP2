@@ -28,7 +28,7 @@ void saveJSON(const string& filename, const json& data, int memory) {
 }
 
 // Función para agregar un nuevo objeto JSON y mantener solo los últimos 4 objetos
-void addAndMaintain(json& data, const json& newObject,int memory) {
+void addAndMaintain(json& data, const json& newObject, int memory) {
     data.push_back(newObject);
     if (data.size() > static_cast<size_t>(memory)) {
         data.erase(data.begin());
@@ -36,10 +36,10 @@ void addAndMaintain(json& data, const json& newObject,int memory) {
 }
 
 int main(int argc, char *argv[]) {
-    /* la entrada por consola debe ser asi:
+     /* la entrada por consola debe ser asi:
     ./programa 'mensaje={"origen":"./invertedindex","destino":"./memcache","contexto":{"tiempo":"1000ns","ori":"backend","isFound":true,"busqueda":"",
     "resultados":[{"archivo":"file-text1.txt","puntaje":"122"},{"archivo":"file-text20.txt","puntaje":"34"},{"archivo":"file-text3.txt","puntaje":"10"},{"archivo":"file-text2.txt","puntaje":"2"}]}}'
-    */
+     4*/
     // Verificar si se proporciona un mensaje como argumento de línea de comandos
     if (argc != 3) {
         cerr << "Uso: " << argv[0] << " mensaje memory" << endl;
@@ -66,12 +66,13 @@ int main(int argc, char *argv[]) {
     // Crear el nuevo objeto JSON con el formato especificado
     json newObject;
     newObject["Busqueda"] = mensajeJSON["contexto"]["busqueda"];
-    newObject["Resultado"] = json::array();
+    newObject["Respuesta"] = json::array();
 
-    for (const auto& resultado : mensajeJSON["contexto"]["resultados"]) {
+    for (int i = 0; i < 5; ++i) {  // Agregar 5 elementos de respuesta
         json fileResult;
-        fileResult[resultado["archivo"].get<string>()] = resultado["puntaje"];
-        newObject["Resultado"].push_back(fileResult);
+        fileResult["archivo"] = "texto" + to_string(i + 1);
+        fileResult["puntaje"] = "cant" + to_string(i + 1);
+        newObject["Respuesta"].push_back(fileResult);
     }
 
     // Nombre del archivo JSON
@@ -88,7 +89,7 @@ int main(int argc, char *argv[]) {
 
     // Imprimir el JSON resultante
     //cout << jsonData.dump(4) << endl;
-    cout<<"Archivo json generado de manera exitosa "<<endl;
+    cout<<"Archivo json creado con exito"<<endl;
 
     return 0;
 }

@@ -1,19 +1,52 @@
 [
-  {
-    "Busqueda": "",
-    "Resultado": [
-      {
-        "file-text1.txt": "122"
-      },
-      {
-        "file-text20.txt": "34"
-      },
-      {
-        "file-text3.txt": "10"
-      },
-      {
-        "file-text2.txt": "2"
-      }
-    ]
-  }
+    {
+        "Busqueda": "",
+        "Respuesta": [
+            {
+                "archivo": "texto1",
+                "puntaje": "cant1"
+            },
+            {
+                "archivo": "texto2",
+                "puntaje": "cant2"
+            },
+            {
+                "archivo": "texto3",
+                "puntaje": "cant3"
+            },
+            {
+                "archivo": "texto4",
+                "puntaje": "cant4"
+            },
+            {
+                "archivo": "texto5",
+                "puntaje": "cant5"
+            }
+        ]
+    },
+    {
+        "Busqueda": "",
+        "Respuesta": [
+            {
+                "archivo": "texto1",
+                "puntaje": "cant1"
+            },
+            {
+                "archivo": "texto2",
+                "puntaje": "cant2"
+            },
+            {
+                "archivo": "texto3",
+                "puntaje": "cant3"
+            },
+            {
+                "archivo": "texto4",
+                "puntaje": "cant4"
+            },
+            {
+                "archivo": "texto5",
+                "puntaje": "cant5"
+            }
+        ]
+    }
 ]
