@@ -1,0 +1,6 @@
+{
+  "HOST": "./memcache",
+  "FRONT": "./searcher",
+  "BACK": "./invertedindex",
+  "MEMORYSIZE": 4
+}
