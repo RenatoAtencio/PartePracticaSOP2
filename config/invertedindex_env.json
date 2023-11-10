@@ -1,6 +1,6 @@
 {
     "FROM" : "./searcher",
     "TO" : "./memcache",
-    "FILE" : "inverted_index_file",
+    "FILE" : "file.idx",
     "TOPK" : 4
 }

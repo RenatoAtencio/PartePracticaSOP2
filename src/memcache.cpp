@@ -11,12 +11,6 @@
 using json = nlohmann::json;
 using namespace std;
 
-// Variables de entorno
-const string HOST = "./memcache";
-const string FRONT = "./searcher";
-const string BACK = "./invertedindex";
-const int MEMORYSIZE = 4;
-
 // Funcion para conectar a un servidor, necesita la ip del servidor y el puerto del servidor
 int connectToServer(const string& serverIP, int serverPort) {
     // creo el socket para conectarme al server
@@ -207,6 +201,20 @@ string generarMsgRespuesta(string origen, string destino, string txtToSearch, st
 }
 
 int main() {
+    string HOST,FRONT,BACK;
+    int MEMORYSIZE;
+    string jsonEnvFileName = "config/memcache_env.json";
+    ifstream jsonEnv(jsonEnvFileName);
+    if (jsonEnv.is_open()) {
+        json jsonData;
+        jsonEnv >> jsonData;
+        jsonEnv.close();
+        HOST = jsonData["HOST"];
+        FRONT = jsonData["FRONT"];
+        BACK = jsonData["BACK"];
+        MEMORYSIZE = jsonData["MEMORYSIZE"];
+    }
+
     // Elimino el cache al correr el cache
     string jsonFileName = "data/cache.json";
     ifstream file(jsonFileName);

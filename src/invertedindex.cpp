@@ -11,12 +11,6 @@
 using json = nlohmann::json;
 using namespace std;
 
-// Variables de entorno
-const string FROM = "./searcher";
-const string TO = "./memcache";
-const string _FILE = "inverted_index_file.idx"; // (Solo FILE dabe error, colisionaba con algo parece)
-const int TOPK = 4;
-
 int startServer(int& invIndexSocket, sockaddr_in& invIndexAddr, sockaddr_in& memcacheAddr) {
     // Crear el socket del servidor
     invIndexSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -99,13 +93,27 @@ string generarMsgRespuesta(string origen, string destino, string txtToSearch, st
     return (msgRespuesta);
 }
 
-int callInvertedIndex(string txtToSearch, int topK) {
-    string commandSearch = "./buscador data/archivosOut/ file.idx '" + txtToSearch + "' " + to_string(topK);
+int callInvertedIndex(string fileName,string txtToSearch, int topK) {
+    string commandSearch = "./buscador data/archivosOut/ " + fileName + " '" + txtToSearch + "' " + to_string(topK);
     int successSearch = system(commandSearch.c_str());
     return (successSearch);
 }
 
 int main() {
+    string FROM, TO, _FILE;
+    int TOPK = 4;
+    string jsonFileName = "config/invertedindex_env.json";
+    ifstream file(jsonFileName);
+    if (file.is_open()) {
+        json jsonData;
+        file >> jsonData;
+        file.close();
+        FROM = jsonData["FROM"];
+        TO = jsonData["TO"];
+        _FILE = jsonData["FILE"];
+        TOPK = jsonData["TOPK"];
+    }
+
     int invIndexSocket, memcacheSocket;
     struct sockaddr_in invIndexAddr, memcacheAddr;
     socklen_t clientAddrLen = sizeof(memcacheAddr);
@@ -134,7 +142,7 @@ int main() {
 
             // Llamo al inv index que genera el invIndexOutput.txt con el resultado de la busqueda, tambien calculo el tiempo de ejecucion
             auto start = chrono::high_resolution_clock::now();
-            int successSearch = callInvertedIndex(txtToSearch, TOPK);
+            int successSearch = callInvertedIndex(_FILE ,txtToSearch, TOPK);
             auto end = chrono::high_resolution_clock::now();
             auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
 

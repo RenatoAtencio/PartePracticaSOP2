@@ -1,52 +1,86 @@
 [
     {
-        "resultados": [],
-        "txtToSearch": "adios"
-    },
-    {
         "resultados": [
             {
-                "archivo": "file015.txt",
-                "puntaje": 242
-            },
-            {
-                "archivo": "file016.txt",
-                "puntaje": 69
+                "archivo": "file010.txt",
+                "puntaje": 1260
             },
             {
                 "archivo": "file009.txt",
-                "puntaje": 67
+                "puntaje": 134
+            },
+            {
+                "archivo": "file018.txt",
+                "puntaje": 70
             },
             {
                 "archivo": "file013.txt",
-                "puntaje": 52
+                "puntaje": 26
             }
         ],
-        "txtToSearch": "ayuda"
-    },
-    {
-        "resultados": [],
-        "txtToSearch": "mbappe"
+        "txtToSearch": "hermano"
     },
     {
         "resultados": [
             {
-                "archivo": "file008.txt",
-                "puntaje": 371
+                "archivo": "file016.txt",
+                "puntaje": 138
             },
             {
                 "archivo": "file013.txt",
-                "puntaje": 338
+                "puntaje": 78
             },
             {
-                "archivo": "file020.txt",
-                "puntaje": 333
+                "archivo": "file006.txt",
+                "puntaje": 49
             },
             {
-                "archivo": "file017.txt",
-                "puntaje": 315
+                "archivo": "file007.txt",
+                "puntaje": 28
             }
         ],
-        "txtToSearch": "dios"
+        "txtToSearch": "perro"
+    },
+    {
+        "resultados": [
+            {
+                "archivo": "file006.txt",
+                "puntaje": 539
+            },
+            {
+                "archivo": "file009.txt",
+                "puntaje": 134
+            },
+            {
+                "archivo": "file018.txt",
+                "puntaje": 20
+            },
+            {
+                "archivo": "file002.txt",
+                "puntaje": 5
+            }
+        ],
+        "txtToSearch": "gato"
+    },
+    {
+        "resultados": [
+            {
+                "archivo": "file004.txt",
+                "puntaje": 792
+            },
+            {
+                "archivo": "file005.txt",
+                "puntaje": 792
+            },
+            {
+                "archivo": "file009.txt",
+                "puntaje": 603
+            },
+            {
+                "archivo": "file019.txt",
+                "puntaje": 580
+            }
+        ],
+        "txtToSearch": "padre"
     }
 ]

@@ -11,10 +11,6 @@
 using json = nlohmann::json;
 using namespace std;
 
-// Variables de entorno
-const string FROM = "./searcher";
-const string TO = "./memcache";
-
 // Funcion para conectar a un servidor, necesita la ip del servidor y el puerto del servidor
 int connectToServer(const string& serverIP, int serverPort) {
     // creo el socket para conectarme al server
@@ -108,10 +104,18 @@ void imprimirResultado(string respuesta) {
     }
 }
 
-/*
-    Lo que falta: cargar las var de entorno desde un json
-*/
 int main() {
+    string FROM,TO;
+    string jsonFileName = "config/searcher_env.json";
+    ifstream file(jsonFileName);
+    if (file.is_open()) {
+        json jsonData;
+        file >> jsonData;
+        file.close();
+        FROM = jsonData["FROM"];
+        TO = jsonData["TO"];
+    }
+
     string serverIP = "127.0.0.1";  // Dirección IP del servidor
     int memcachePort = 12345;       // Puerto del servidor memcache
     int searcher_memcache_Socket = connectToServer(serverIP, memcachePort); //Socket entre el searcher y el memcache (Con este uno envia y recive msg del o al memcache)
