@@ -48,6 +48,63 @@ int startServer(int& invIndexSocket, sockaddr_in& invIndexAddr, sockaddr_in& mem
     return 1;
 }
 
+// Toma el mensaje y devuelve la busqueda hecha por el usuario
+string getSearchFromMsg(string msg) {
+    string txtToSearch;
+    string jsonString = string(msg);
+
+    // Carga el string como un json (hace mas facil el tomar la variable txtToSearch)
+    replace(jsonString.begin(), jsonString.end(), '\'', '\"');
+    json jsonData = json::parse(jsonString);
+    txtToSearch = jsonData["contexto"]["txtToSearch"];
+
+    cout << "Busqueda hecha por el cliente: " << txtToSearch << endl;
+    return (txtToSearch);
+}
+
+/*Genera el string del mensaje de respuesta, el formato es
+    mensaje = {
+        "origen": "origen",
+        "destino": "destino",
+        "contexto": {
+            "tiempo": "tiempo(ns)",
+            "ori": "origen",
+            "isFound": "ResultadoBusqueda",
+            "resultados" : [
+                {"archivo": "texto1", "puntaje": "cant1"},
+                {"archivo": "texto2", "puntaje": "cant2"},
+                {"archivo": "texto3", "puntaje": "cant3"},
+                {"archivo": "texto4", "puntaje": "cant4"},
+                {"archivo": "texto5", "puntaje": "cant5"}
+            ]
+        }
+    }
+*/
+string generarMsgRespuesta(string origen, string destino, string txtToSearch, string tiempo, string ori, string resultado) {
+    string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " " + txtToSearch + " " + tiempo + " " + ori + " '" + resultado + "'";
+    int successResp = system(commandResp.c_str());
+    string msgRespuesta;
+    if (successResp == 0) {
+        ifstream readMsg;
+        readMsg.open("data/msg.txt");
+        string line;
+        while (getline(readMsg, line)) {
+            msgRespuesta += line; // Agregar cada línea al contenido
+        }
+    }
+    else {
+        cout << "No se pudo llamar al programa externo para crear el msg";
+        exit(EXIT_FAILURE);
+    }
+    return (msgRespuesta);
+}
+
+int callInvertedIndex(string txtToSearch, int topK) {
+    string commandSearch = "./buscador data/ file.idx " + txtToSearch + " " + to_string(topK);
+    int successSearch = system(commandSearch.c_str());
+    return (successSearch);
+}
+
 int main() {
     int invIndexSocket, memcacheSocket;
     struct sockaddr_in invIndexAddr, memcacheAddr;
@@ -71,28 +128,19 @@ int main() {
             ssize_t msgRead = recv(memcacheSocket, msg, sizeof(msg), 0);
             msg[msgRead] = '\0';
             cout << "Mensaje recibido: " << msg << endl;
-            string responseMsg = "El mensaje recibido fue: " + string(msg);
 
-            // Aqui hacer el parse del msg para obtener el txtToSearch (Todo esto fue hecho con el nlohmann)
-            string txtToSearch;
-            string jsonString = string(msg);
+            // Se toma la busqueda hecha por el usuario desde el msg (que esta en formato json)
+            string txtToSearch = getSearchFromMsg(msg);
 
-            // Reemplazar comillas simples por comillas dobles
-            replace(jsonString.begin(), jsonString.end(), '\'', '\"');
-
-            // Analizar el string JSON
-            json jsonData = json::parse(jsonString);
-
-            // Acceder a la variable 'txtToSearch' en el contexto
-            txtToSearch = jsonData["contexto"]["txtToSearch"];
-
+            // Llamo al inv index que genera el invIndexOutput.txt con el resultado de la busqueda, tambien calculo el tiempo de ejecucion
             auto start = chrono::high_resolution_clock::now();
-            string commandSearch = "./buscador data/ file.idx " + txtToSearch + " 4";
-            int successSearch = system(commandSearch.c_str());
+            int successSearch = callInvertedIndex(txtToSearch, TOPK);
             auto end = chrono::high_resolution_clock::now();
             auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+
             string msg;
             if (successSearch == 0) {
+
                 ifstream readMsg;
                 readMsg.open("data/invIndexOutput.txt");
                 string line;
@@ -100,28 +148,16 @@ int main() {
                     msg += line; // Agregar cada línea al contenido
                 }
 
-                string origen, destino, tiempo, ori, isFound, resultado;
+                // Generar el msg de respuesta
+                string origen, destino, tiempo, ori, resultado;
                 origen = FROM;
                 destino = TO;
                 tiempo = to_string(duration);
                 ori = "BACKEND";
                 resultado = msg;
+                string msgToFront = generarMsgRespuesta(origen, destino, txtToSearch, tiempo, ori, resultado);
 
-                string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " " + tiempo + " " + ori + " '" + resultado + "'";
-                int successResp = system(commandResp.c_str());
-                string msgToFront;
-                if (successResp == 0) {
-                    ifstream readMsg;
-                    readMsg.open("data/msg.txt");
-                    string line;
-                    while (getline(readMsg, line)) {
-                        msgToFront += line; // Agregar cada línea al contenido
-                    }
-                }
-                else {
-                    cout << "No se pudo llamar al programa externo para crear el msg";
-                    exit(EXIT_FAILURE);
-                }
+                // Mandar el msg a la cache y cerrar la conexion con la cache
                 send(memcacheSocket, msgToFront.c_str(), msgToFront.length(), 0);
                 close(memcacheSocket);
                 cout << "Cliente desconectado" << endl;
@@ -133,6 +169,5 @@ int main() {
             break; // Salir del bucle interior
         }
     }
-    // El servidor seguirá esperando nuevas conexiones sin terminar
     return 0;
 }

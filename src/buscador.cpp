@@ -94,20 +94,24 @@ int main(int argc, char* argv[]) {
 
         // Ahora, imprime los resultados ordenados.
         string jsonOutput = "[";
-        for (const pair<string, int>& result : endResults) {
-            topk--;
-            if (topk < 0) {
-                break;
-            }
-            // Agregar para imprimir el vector de mayor a menor usando el int del pair y respetando el topk < 0
-            string fileName = result.first;
-            int value = result.second;
-            jsonOutput += "{ \"archivo\": \"" + fileName + "\", \"puntaje\": " + to_string(value) + " }";
+        auto resultIterator = endResults.begin();
 
-            // Agregar una coma si no es el último elemento
-            if (topk > 0) {
+        while (resultIterator != endResults.end() && topk > 0) {
+            // Acceder a los valores
+            std::string fileName = resultIterator->first;
+            int value = resultIterator->second;
+
+            // Construir la cadena JSON para cada par
+            jsonOutput += "{ \"archivo\": \"" + fileName + "\", \"puntaje\": " + std::to_string(value) + " }";
+
+            // Agregar una coma si no es el último elemento y no se ha alcanzado el límite de topk
+            if (topk > 1 && (resultIterator != std::prev(endResults.end()))) {
                 jsonOutput += ", ";
             }
+
+            // Mover al siguiente elemento
+            ++resultIterator;
+            --topk;
         }
         jsonOutput += "]";
 

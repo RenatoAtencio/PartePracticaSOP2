@@ -187,8 +187,8 @@ bool verifyInCacheMemory(string txtToSearch, int& index, json& jsonArray) {
         }
     }
 */
-string generarMsgRespuesta(string origen, string destino, string tiempo, string ori, string resultado) {
-    string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " " + tiempo + " " + ori + " '" + resultado + "'";
+string generarMsgRespuesta(string origen, string destino, string txtToSearch, string tiempo, string ori, string resultado) {
+    string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " " + txtToSearch + " " + tiempo + " " + ori + " '" + resultado + "'";
     int successResp = system(commandResp.c_str());
     string msgRespuesta;
     if (successResp == 0) {
@@ -249,7 +249,7 @@ int main() {
                 tiempo = to_string(duration);
                 ori = "MEMCACHE";
                 resultado = jsonArray[index]["Respuesta"].dump();
-                string msgToFront = generarMsgRespuesta(origen, destino, tiempo, ori, resultado); // Generar msg de respuesta
+                string msgToFront = generarMsgRespuesta(origen, destino, txtToSearch, tiempo, ori, resultado); // Generar msg de respuesta
 
                 // Manda el msg de respuesta al searcher
                 send(searcherSocket, msgToFront.c_str(), msgToFront.length(), 0);
@@ -266,15 +266,15 @@ int main() {
                 string resp = recieveServerMessage(index_socket);
 
                 // Agregar la respuesta del index a la memoria 
-                // string commandAddToJson = "./programa '" + resp + "' " + to_string(MEMORYSIZE);
-                // int successAdd = system(commandAddToJson.c_str());
-                // if (successAdd == 0) {
-                //     cout << "Ultima busqueda agregada al cache" << endl;
-                // }
-                // else {
-                //     cout << "No se puedo llamar al programa externo" << endl;
-                //     exit(EXIT_FAILURE);
-                // }
+                string commandAddToJson = "./actualizarJson '" + resp + "' " + to_string(MEMORYSIZE);
+                int successAdd = system(commandAddToJson.c_str());
+                if (successAdd == 0) {
+                    cout << "Ultima busqueda agregada al cache" << endl;
+                }
+                else {
+                    cout << "No se puedo llamar al programa externo" << endl;
+                    exit(EXIT_FAILURE);
+                }
 
                 cout << "La respuesta del index es: " << resp << endl;
                 close(index_socket);

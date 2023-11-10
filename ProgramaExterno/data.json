@@ -1,51 +1,85 @@
 [
     {
-        "Busqueda": "",
-        "Respuesta": [
+        "busqueda": "Hola",
+        "respuesta": [
             {
-                "archivo": "texto1",
-                "puntaje": "cant1"
+                "archivo": "file-text1.txt",
+                "puntaje": "122"
             },
             {
-                "archivo": "texto2",
-                "puntaje": "cant2"
+                "archivo": "file-text20.txt",
+                "puntaje": "34"
             },
             {
-                "archivo": "texto3",
-                "puntaje": "cant3"
+                "archivo": "file-text3.txt",
+                "puntaje": "10"
             },
             {
-                "archivo": "texto4",
-                "puntaje": "cant4"
-            },
-            {
-                "archivo": "texto5",
-                "puntaje": "cant5"
+                "archivo": "file-text2.txt",
+                "puntaje": "9"
             }
         ]
     },
     {
-        "Busqueda": "",
-        "Respuesta": [
+        "busqueda": "Hola",
+        "respuesta": [
             {
-                "archivo": "texto1",
-                "puntaje": "cant1"
+                "archivo": "file-text1.txt",
+                "puntaje": "122"
             },
             {
-                "archivo": "texto2",
-                "puntaje": "cant2"
+                "archivo": "file-text20.txt",
+                "puntaje": "34"
             },
             {
-                "archivo": "texto3",
-                "puntaje": "cant3"
+                "archivo": "file-text3.txt",
+                "puntaje": "10"
             },
             {
-                "archivo": "texto4",
-                "puntaje": "cant4"
+                "archivo": "file-text2.txt",
+                "puntaje": "9"
+            }
+        ]
+    },
+    {
+        "busqueda": "Hola",
+        "respuesta": [
+            {
+                "archivo": "file-text1.txt",
+                "puntaje": "122"
             },
             {
-                "archivo": "texto5",
-                "puntaje": "cant5"
+                "archivo": "file-text20.txt",
+                "puntaje": "34"
+            },
+            {
+                "archivo": "file-text3.txt",
+                "puntaje": "10"
+            },
+            {
+                "archivo": "file-text2.txt",
+                "puntaje": "9"
+            }
+        ]
+    },
+    {
+        "busqueda": "",
+        "respuesta": [
+            {
+                "archivo": "file-text1.txt",
+                "puntaje": "122"
+            },
+            {
+                "archivo": "file-text20.txt",
+                "puntaje": "34"
+            },
+            {
+                "archivo": "file-text3.txt",
+                "puntaje": "10"
+            },
+            {
+                "archivo": "file-text2.txt",
+                "puntaje": "9"
             }
         ]
     }

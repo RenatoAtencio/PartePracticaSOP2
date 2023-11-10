@@ -15,8 +15,9 @@ TARGET1 = searcher  # Primer programa
 TARGET2 = memcache  # Segundo programa
 TARGET3 = invertedindex  # Tercer progrma 
 TARGET4 = buscador
+TARGET5 = actualizarJson
 
-all: $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4)
+all: $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5)
 
 $(TARGET1): $(OBJ_DIR)/searcher.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
@@ -29,9 +30,12 @@ $(TARGET3): $(OBJ_DIR)/invertedindex.o
 
 $(TARGET4): $(OBJ_DIR)/buscador.o
 	$(CXX) $(CXXFLAGS) -o $@ $^	
+	
+$(TARGET5): $(OBJ_DIR)/actualizarJson.o
+	$(CXX) $(CXXFLAGS) -o $@ $^	
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clean:
-	rm -rf $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4)
+	rm -rf $(TARGET1) $(TARGET2) $(TARGET3) $(TARGET4) $(TARGET5)
