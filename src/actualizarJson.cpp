@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
         // Crear el nuevo objeto JSON con el formato especificado
         json newObject;
         newObject["txtToSearch"] = mensajeJSON["contexto"]["txtToSearch"];
-        newObject["respuesta"] = json::array();
+        newObject["resultados"] = json::array();
 
         json jsonArray = mensajeJSON["contexto"]["resultados"];
 
@@ -70,11 +70,11 @@ int main(int argc, char* argv[]) {
             json elemJson;
             elemJson["archivo"] = elemento["archivo"];
             elemJson["puntaje"] = elemento["puntaje"];
-            newObject["respuesta"].push_back(elemJson);
+            newObject["resultados"].push_back(elemJson);
         }
 
         // Nombre del archivo JSON
-        string filename = "cache.json";
+        string filename = "data/cache.json";
 
         // Cargar datos desde el archivo JSON
         json jsonData = loadJSON(filename);

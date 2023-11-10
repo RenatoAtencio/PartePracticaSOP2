@@ -1,42 +1,41 @@
 [
-  {
-    "Busqueda": "Hola mundo",
-    "Respuesta": [
-      { "archivo": "texto1", "puntaje": "cant1" },
-      { "archivo": "texto2", "puntaje": "cant2" },
-      { "archivo": "texto3", "puntaje": "cant3" },
-      { "archivo": "texto4", "puntaje": "cant4" },
-      { "archivo": "texto5", "puntaje": "cant5" }
-    ]
-  },
-  {
-    "Busqueda": "Miraflore",
-    "Respuesta": [
-      { "archivo": "texto1", "puntaje": "cant1" },
-      { "archivo": "texto2", "puntaje": "cant2" },
-      { "archivo": "texto3", "puntaje": "cant3" },
-      { "archivo": "texto4", "puntaje": "cant4" },
-      { "archivo": "texto5", "puntaje": "cant5" }
-    ]
-  },
-  {
-    "Busqueda": "Blue",
-    "Respuesta": [
-      { "archivo": "texto1", "puntaje": 1 },
-      { "archivo": "texto2", "puntaje": "cant2" },
-      { "archivo": "texto3", "puntaje": "cant3" },
-      { "archivo": "texto4", "puntaje": "cant4" },
-      { "archivo": "texto5", "puntaje": "cant5" }
-    ]
-  },
-  {
-    "Busqueda": "galleta",
-    "Respuesta": [
-      { "archivo": "texto1", "puntaje": "cant1" },
-      { "archivo": "texto2", "puntaje": "cant2" },
-      { "archivo": "texto3", "puntaje": "cant3" },
-      { "archivo": "texto4", "puntaje": "cant4" },
-      { "archivo": "texto5", "puntaje": "cant5" }
-    ]
-  }
+    {
+        "resultados": [],
+        "txtToSearch": "Hola"
+    },
+    {
+        "resultados": [
+            {
+                "archivo": "file019.txt",
+                "puntaje": 128
+            },
+            {
+                "archivo": "file018.txt",
+                "puntaje": 61
+            }
+        ],
+        "txtToSearch": "war in the"
+    },
+    {
+        "resultados": [
+            {
+                "archivo": "file002.txt",
+                "puntaje": 1
+            }
+        ],
+        "txtToSearch": "hola"
+    },
+    {
+        "resultados": [
+            {
+                "archivo": "file019.txt",
+                "puntaje": 92
+            },
+            {
+                "archivo": "file018.txt",
+                "puntaje": 41
+            }
+        ],
+        "txtToSearch": "war in hamas israel"
+    }
 ]

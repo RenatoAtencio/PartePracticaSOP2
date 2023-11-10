@@ -154,17 +154,17 @@ bool verifyInCacheMemory(string txtToSearch, int& index, json& jsonArray) {
     string filename = "data/cache.json";
     ifstream fileStream(filename);
     if (!fileStream.is_open()) {
-        cerr << "Error al abrir el archivo JSON." << endl;
-        exit(EXIT_FAILURE);
+        cerr << "No existe o no se pudo abrir cache.json" << endl;
+        return(false);
     }
     fileStream >> jsonArray;
     fileStream.close();
 
     for (const auto& elemento : jsonArray) {
-        if (elemento["Busqueda"] == txtToSearch) {
+        if (elemento["txtToSearch"] == txtToSearch) {
             return (true);
-            index++;
         }
+        index++;
     }
     return (false);
 }
@@ -188,7 +188,7 @@ bool verifyInCacheMemory(string txtToSearch, int& index, json& jsonArray) {
     }
 */
 string generarMsgRespuesta(string origen, string destino, string txtToSearch, string tiempo, string ori, string resultado) {
-    string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " " + txtToSearch + " " + tiempo + " " + ori + " '" + resultado + "'";
+    string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " '" + txtToSearch + "' " + tiempo + " " + ori + " '" + resultado + "'";
     int successResp = system(commandResp.c_str());
     string msgRespuesta;
     if (successResp == 0) {
@@ -237,6 +237,7 @@ int main() {
             // Buscar en memoria la busqueda, tambien se calcula el tiempo en caso de que si este en memoria
             int index = 0;
             json jsonArray; // Mensaje como json
+            jsonArray.clear();
             auto start = chrono::high_resolution_clock::now();
             bool encontrado = verifyInCacheMemory(txtToSearch, index, jsonArray); // Devuelve true si esta en memoria, falso si no
             auto end = chrono::high_resolution_clock::now();
@@ -248,11 +249,20 @@ int main() {
                 destino = FRONT;
                 tiempo = to_string(duration);
                 ori = "MEMCACHE";
-                resultado = jsonArray[index]["Respuesta"].dump();
+                resultado = jsonArray[index]["resultados"].dump();
                 string msgToFront = generarMsgRespuesta(origen, destino, txtToSearch, tiempo, ori, resultado); // Generar msg de respuesta
 
                 // Manda el msg de respuesta al searcher
                 send(searcherSocket, msgToFront.c_str(), msgToFront.length(), 0);
+                ssize_t msgRead = recv(searcherSocket, msg, sizeof(msg), 0); // Recibe el msg enviado por el searcher
+                msg[msgRead] = '\0';
+                if (string(msg) == "s") {
+                    close(searcherSocket);
+                    cout << "Se desconecto el cliente" << endl;
+                    success = false;
+                }else{
+                    continue;
+                }
             }
             else { // Si no se encontro en memoria
                 string serverIP = "127.0.0.1";  // Dirección IP del servidor
@@ -279,6 +289,15 @@ int main() {
                 cout << "La respuesta del index es: " << resp << endl;
                 close(index_socket);
                 send(searcherSocket, resp.c_str(), resp.length(), 0); // envia la respuesta del index al searcher (La respuesta del index ya deberia de estar con el formato correcto)
+                ssize_t msgRead = recv(searcherSocket, msg, sizeof(msg), 0); // Recibe el msg enviado por el searcher
+                msg[msgRead] = '\0';
+                if (string(msg) == "s") {
+                    close(searcherSocket);
+                    cout << "Se desconecto el cliente" << endl;
+                    success = false;
+                }else{
+                    continue;
+                }
             }
         }
     }

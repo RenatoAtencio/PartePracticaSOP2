@@ -95,11 +95,16 @@ void imprimirResultado(string respuesta) {
     string origen = jsonData["contexto"]["ori"];
     json jsonArray = jsonData["contexto"]["resultados"];
 
-    cout << "Respuesta (Tiempo: " << tiempo << "ns, Origen: " << origen << ")" << endl;
+    cout << "Respuesta: (Tiempo: " << tiempo << "ns, Origen: " << origen << ")" << endl;
     int index = 1;
-    for (const auto& elemento : jsonArray) {
-        cout << index << ") " << elemento["archivo"] << " " << elemento["puntaje"] << endl;
-        index++;
+    if (jsonArray.empty()) {
+        cout << "   La busqueda no aparece en ningun archivo" << endl;
+    }
+    else {
+        for (const auto& elemento : jsonArray) {
+            cout << "   " << index << ") " << elemento["archivo"] << " " << elemento["puntaje"] << endl;
+            index++;
+        }
     }
 }
 
@@ -133,10 +138,14 @@ int main() {
         cin >> salir;
         cin.ignore(numeric_limits<streamsize>::max(), '\n'); //Limpia el buffer para que al poner la respuesta no mande algo vacio al server
         if (salir == 's') {
+            sendMessage(searcher_memcache_Socket, "s");
             cout << "Se ha desconectado" << endl;
-            close(searcher_memcache_Socket);
             exit(EXIT_FAILURE);
         }
+        else {
+            sendMessage(searcher_memcache_Socket, "n");
+        }
+
     }
     return 0;
 }

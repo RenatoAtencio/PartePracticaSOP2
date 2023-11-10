@@ -81,7 +81,7 @@ string getSearchFromMsg(string msg) {
     }
 */
 string generarMsgRespuesta(string origen, string destino, string txtToSearch, string tiempo, string ori, string resultado) {
-    string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " " + txtToSearch + " " + tiempo + " " + ori + " '" + resultado + "'";
+    string commandResp = "python3 src/format.py 2 " + origen + " " + destino + " '" + txtToSearch + "' " + tiempo + " " + ori + " '" + resultado + "'";
     int successResp = system(commandResp.c_str());
     string msgRespuesta;
     if (successResp == 0) {
@@ -100,7 +100,7 @@ string generarMsgRespuesta(string origen, string destino, string txtToSearch, st
 }
 
 int callInvertedIndex(string txtToSearch, int topK) {
-    string commandSearch = "./buscador data/ file.idx " + txtToSearch + " " + to_string(topK);
+    string commandSearch = "./buscador data/ file.idx '" + txtToSearch + "' " + to_string(topK);
     int successSearch = system(commandSearch.c_str());
     return (successSearch);
 }
