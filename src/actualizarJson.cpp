@@ -38,7 +38,7 @@ void addAndMaintain(json& data, const json& newObject, int memory) {
 
 int main(int argc, char* argv[]) {
     /* la entrada por consola debe ser asi:
-   ./programa '{"origen":"./invertedindex","destino":"./memcache","contexto":{"tiempo":"1000ns","ori":"backend","isFound":true,"busqueda":"",
+   ./programa '{"origen":"./invertedindex","destino":"./memcache","contexto":{"tiempo":"1000ns","ori":"backend","isFound":true,"txtToSearch":"",
    "resultados":[{"archivo":"file-text1.txt","puntaje":"122"},{"archivo":"file-text20.txt","puntaje":"34"},{"archivo":"file-text3.txt","puntaje":"10"},{"archivo":"file-text2.txt","puntaje":"2"}]}}'
     4*/
     // Verificar si se proporciona un mensaje como argumento de línea de comandos

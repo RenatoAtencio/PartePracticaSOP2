@@ -2,5 +2,5 @@
     "FROM" : "./searcher",
     "TO" : "./memcache",
     "FILE" : "file.idx",
-    "TOPK" : 4
+    "TOPK" : 6
 }

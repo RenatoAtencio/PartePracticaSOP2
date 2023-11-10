@@ -171,6 +171,7 @@ bool verifyInCacheMemory(string txtToSearch, int& index, json& jsonArray) {
             "tiempo": "tiempo(ns)",
             "ori": "origen",
             "isFound": "ResultadoBusqueda",
+            "txtToSearch": "busqueda",
             "resultados" : [
                 {"archivo": "texto1", "puntaje": "cant1"},
                 {"archivo": "texto2", "puntaje": "cant2"},
@@ -222,6 +223,7 @@ int main() {
         file.close();
         remove(jsonFileName.c_str());
     }
+
     int memcacheSocket, searcherSocket;
     struct sockaddr_in memcacheAddr, searcherAddr;
     socklen_t clientAddrLen = sizeof(searcherAddr);

@@ -1,86 +1,131 @@
 [
-    {
-        "resultados": [
-            {
-                "archivo": "file010.txt",
-                "puntaje": 1260
-            },
-            {
-                "archivo": "file009.txt",
-                "puntaje": 134
-            },
-            {
-                "archivo": "file018.txt",
-                "puntaje": 70
-            },
-            {
-                "archivo": "file013.txt",
-                "puntaje": 26
-            }
-        ],
-        "txtToSearch": "hermano"
-    },
-    {
-        "resultados": [
-            {
-                "archivo": "file016.txt",
-                "puntaje": 138
-            },
-            {
-                "archivo": "file013.txt",
-                "puntaje": 78
-            },
-            {
-                "archivo": "file006.txt",
-                "puntaje": 49
-            },
-            {
-                "archivo": "file007.txt",
-                "puntaje": 28
-            }
-        ],
-        "txtToSearch": "perro"
-    },
-    {
-        "resultados": [
-            {
-                "archivo": "file006.txt",
-                "puntaje": 539
-            },
-            {
-                "archivo": "file009.txt",
-                "puntaje": 134
-            },
-            {
-                "archivo": "file018.txt",
-                "puntaje": 20
-            },
-            {
-                "archivo": "file002.txt",
-                "puntaje": 5
-            }
-        ],
-        "txtToSearch": "gato"
-    },
-    {
-        "resultados": [
-            {
-                "archivo": "file004.txt",
-                "puntaje": 792
-            },
-            {
-                "archivo": "file005.txt",
-                "puntaje": 792
-            },
-            {
-                "archivo": "file009.txt",
-                "puntaje": 603
-            },
-            {
-                "archivo": "file019.txt",
-                "puntaje": 580
-            }
-        ],
-        "txtToSearch": "padre"
-    }
+      {
+            "resultados": [
+                  {
+                        "archivo": "file016.txt",
+                        "puntaje": 138
+                  },
+                  {
+                        "archivo": "file013.txt",
+                        "puntaje": 78
+                  },
+                  {
+                        "archivo": "file006.txt",
+                        "puntaje": 49
+                  },
+                  {
+                        "archivo": "file007.txt",
+                        "puntaje": 28
+                  },
+                  {
+                        "archivo": "file018.txt",
+                        "puntaje": 20
+                  },
+                  {
+                        "archivo": "file002.txt",
+                        "puntaje": 7
+                  }
+            ],
+            "txtToSearch": "perro"
+      },
+      {
+            "resultados": [
+                  {
+                        "archivo": "file006.txt",
+                        "puntaje": 539
+                  },
+                  {
+                        "archivo": "file009.txt",
+                        "puntaje": 134
+                  },
+                  {
+                        "archivo": "file018.txt",
+                        "puntaje": 20
+                  },
+                  {
+                        "archivo": "file002.txt",
+                        "puntaje": 5
+                  }
+            ],
+            "txtToSearch": "gato"
+      },
+      {
+            "resultados": [],
+            "txtToSearch": "pajaro gato"
+      },
+      {
+            "resultados": [
+                  {
+                        "archivo": "file006.txt",
+                        "puntaje": 588
+                  },
+                  {
+                        "archivo": "file018.txt",
+                        "puntaje": 40
+                  },
+                  {
+                        "archivo": "file002.txt",
+                        "puntaje": 12
+                  }
+            ],
+            "txtToSearch": "perro gato"
+      },
+      {
+            "resultados": [
+                  {
+                        "archivo": "file008.txt",
+                        "puntaje": 371
+                  },
+                  {
+                        "archivo": "file013.txt",
+                        "puntaje": 338
+                  },
+                  {
+                        "archivo": "file020.txt",
+                        "puntaje": 333
+                  },
+                  {
+                        "archivo": "file017.txt",
+                        "puntaje": 315
+                  },
+                  {
+                        "archivo": "file009.txt",
+                        "puntaje": 268
+                  },
+                  {
+                        "archivo": "file018.txt",
+                        "puntaje": 240
+                  }
+            ],
+            "txtToSearch": "dios"
+      },
+      {
+            "resultados": [
+                  {
+                        "archivo": "file009.txt",
+                        "puntaje": 335
+                  },
+                  {
+                        "archivo": "file020.txt",
+                        "puntaje": 222
+                  },
+                  {
+                        "archivo": "file012.txt",
+                        "puntaje": 166
+                  },
+                  {
+                        "archivo": "file011.txt",
+                        "puntaje": 105
+                  },
+                  {
+                        "archivo": "file003.txt",
+                        "puntaje": 84
+                  },
+                  {
+                        "archivo": "file007.txt",
+                        "puntaje": 84
+                  }
+            ],
+            "txtToSearch": "salir"
+      }
 ]
