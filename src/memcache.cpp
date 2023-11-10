@@ -207,6 +207,13 @@ string generarMsgRespuesta(string origen, string destino, string txtToSearch, st
 }
 
 int main() {
+    // Elimino el cache al correr el cache
+    string jsonFileName = "data/cache.json";
+    ifstream file(jsonFileName);
+    if (file.good()) {
+        file.close();
+        remove(jsonFileName.c_str());
+    }
     int memcacheSocket, searcherSocket;
     struct sockaddr_in memcacheAddr, searcherAddr;
     socklen_t clientAddrLen = sizeof(searcherAddr);

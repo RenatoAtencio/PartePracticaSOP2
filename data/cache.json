@@ -1,41 +1,52 @@
 [
     {
         "resultados": [],
-        "txtToSearch": "Hola"
+        "txtToSearch": "adios"
     },
     {
         "resultados": [
             {
-                "archivo": "file019.txt",
-                "puntaje": 128
+                "archivo": "file015.txt",
+                "puntaje": 242
             },
             {
-                "archivo": "file018.txt",
-                "puntaje": 61
-            }
-        ],
-        "txtToSearch": "war in the"
-    },
-    {
-        "resultados": [
-            {
-                "archivo": "file002.txt",
-                "puntaje": 1
-            }
-        ],
-        "txtToSearch": "hola"
-    },
-    {
-        "resultados": [
-            {
-                "archivo": "file019.txt",
-                "puntaje": 92
+                "archivo": "file016.txt",
+                "puntaje": 69
             },
             {
-                "archivo": "file018.txt",
-                "puntaje": 41
+                "archivo": "file009.txt",
+                "puntaje": 67
+            },
+            {
+                "archivo": "file013.txt",
+                "puntaje": 52
             }
         ],
-        "txtToSearch": "war in hamas israel"
+        "txtToSearch": "ayuda"
+    },
+    {
+        "resultados": [],
+        "txtToSearch": "mbappe"
+    },
+    {
+        "resultados": [
+            {
+                "archivo": "file008.txt",
+                "puntaje": 371
+            },
+            {
+                "archivo": "file013.txt",
+                "puntaje": 338
+            },
+            {
+                "archivo": "file020.txt",
+                "puntaje": 333
+            },
+            {
+                "archivo": "file017.txt",
+                "puntaje": 315
+            }
+        ],
+        "txtToSearch": "dios"
     }
 ]

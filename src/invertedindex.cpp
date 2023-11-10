@@ -100,7 +100,7 @@ string generarMsgRespuesta(string origen, string destino, string txtToSearch, st
 }
 
 int callInvertedIndex(string txtToSearch, int topK) {
-    string commandSearch = "./buscador data/ file.idx '" + txtToSearch + "' " + to_string(topK);
+    string commandSearch = "./buscador data/archivosOut/ file.idx '" + txtToSearch + "' " + to_string(topK);
     int successSearch = system(commandSearch.c_str());
     return (successSearch);
 }

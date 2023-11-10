@@ -1,1 +1,1 @@
-[{ "archivo": "file019.txt", "puntaje": 92 }, { "archivo": "file018.txt", "puntaje": 41 }]
+[{ "archivo": "file008.txt", "puntaje": 371 }, { "archivo": "file013.txt", "puntaje": 338 }, { "archivo": "file020.txt", "puntaje": 333 }, { "archivo": "file017.txt", "puntaje": 315 }]
